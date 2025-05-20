@@ -1,7 +1,7 @@
 # models/course.py
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
-from database.db_config import Base
+from app.database.db_config import Base
 
 class Course(Base):
     __tablename__ = "courses"

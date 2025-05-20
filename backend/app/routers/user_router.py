@@ -2,8 +2,8 @@
 
 from fastapi import APIRouter
 from typing import List
-from schemas.user_schemas import UserCreate, UserResponse
-from controllers import auth_controllers, user_controllers
+from app.schemas.user_schemas import UserCreate, UserResponse
+from app.controllers import auth_controllers, user_controllers
 
 router = APIRouter(prefix="/users", tags=["Users"])
 

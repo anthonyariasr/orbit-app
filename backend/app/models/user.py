@@ -1,6 +1,6 @@
 # models/user.py
 from sqlalchemy import Column, Integer, String
-from database.db_config import Base
+from app.database.db_config import Base
 
 class User(Base):
     __tablename__ = "users"

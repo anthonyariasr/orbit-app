@@ -1,9 +1,9 @@
 # controllers/auth_controllers.py
 
 from fastapi import HTTPException, status
-from schemas.user_schemas import UserCreate, UserResponse
-from models.user import User
-from database.db_config import SessionLocal
+from app.schemas.user_schemas import UserCreate, UserResponse, UserLogin
+from app.models.user import User
+from app.database.db_config import SessionLocal
 from sqlalchemy.orm import Session
 import bcrypt
 
@@ -58,13 +58,13 @@ def register_user(user_data: UserCreate, db: Session = next(get_db())) -> UserRe
 
     return new_user
 
-def login_user(credentials: dict, db: Session = next(get_db())):
+def login_user(credentials: UserLogin, db: Session = next(get_db())):
     """
     Authenticates a user using bcrypt verification.
-    Accepts 'username' or 'email' and 'password'.
+    Accepts email or username and password.
     """
-    identifier = credentials.get("email") or credentials.get("username")
-    password = credentials.get("password")
+    identifier = credentials.email or credentials.username
+    password = credentials.password
 
     if not identifier or not password:
         raise HTTPException(status_code=400, detail="Missing credentials")

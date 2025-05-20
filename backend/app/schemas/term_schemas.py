@@ -5,6 +5,7 @@ from typing import Optional
 class TermBase(BaseModel):
     name: str
     is_active: Optional[bool] = True
+    user_id: int 
 
 class TermCreate(TermBase):
     pass
@@ -12,5 +13,7 @@ class TermCreate(TermBase):
 class TermResponse(TermBase):
     id: int
 
-    class Config:
-        orm_mode = True
+    model_config = {
+            "from_attributes": True
+        }
+        

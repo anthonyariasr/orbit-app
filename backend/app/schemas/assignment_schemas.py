@@ -14,5 +14,7 @@ class AssignmentCreate(AssignmentBase):
 class AssignmentResponse(AssignmentBase):
     id: int
 
-    class Config:
-        orm_mode = True
+    model_config = {
+            "from_attributes": True
+        }
+        
