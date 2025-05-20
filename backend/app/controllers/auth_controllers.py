@@ -5,6 +5,7 @@ from app.schemas.user_schemas import UserCreate, UserResponse, UserLogin
 from app.models.user import User
 from app.database.db_config import SessionLocal
 from sqlalchemy.orm import Session
+from app.utils.jwt_handler import create_jwt_token
 import bcrypt
 
 """
@@ -58,22 +59,47 @@ def register_user(user_data: UserCreate, db: Session = next(get_db())) -> UserRe
 
     return new_user
 
+from fastapi import HTTPException, status
+from sqlalchemy.orm import Session
+from app.models.user import User
+from app.schemas.user_schemas import UserLogin
+from app.utils.jwt_handler import create_jwt_token, verify_password
+from app.database.db_config import SessionLocal
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 def login_user(credentials: UserLogin, db: Session = next(get_db())):
     """
-    Authenticates a user using bcrypt verification.
-    Accepts email or username and password.
+    Authenticates a user using bcrypt and returns a JWT token.
+    Accepts either email or username and a password.
     """
+    # Use email if provided, otherwise use username
     identifier = credentials.email or credentials.username
     password = credentials.password
 
     if not identifier or not password:
         raise HTTPException(status_code=400, detail="Missing credentials")
 
+    # Find user by email or username
     user = db.query(User).filter(
         (User.email == identifier) | (User.username == identifier)
     ).first()
 
+    # Check if user exists and password is correct
     if not user or not verify_password(password, user.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    return {"message": "Login successful", "user_id": user.id}
+    # Generate JWT token with user_id payload
+    token = create_jwt_token({"user_id": user.id})
+
+    # Return the token in standard OAuth2-compatible format
+    return {
+        "access_token": token,
+        "token_type": "bearer"
+    }
+

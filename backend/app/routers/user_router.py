@@ -4,6 +4,9 @@ from fastapi import APIRouter
 from typing import List
 from app.schemas.user_schemas import UserCreate, UserResponse
 from app.controllers import auth_controllers, user_controllers
+from app.dependencies.auth import get_current_user
+from fastapi import Depends
+from app.models.user import User
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -98,3 +101,20 @@ def change_password(user_id: int, payload: dict):
     The payload should include current and new password.
     """
     return user_controllers.change_password(user_id, payload)
+
+"""
+SESSION AUTHENTICATION
+
+Endpoint that returns the profile of the currently authenticated user:
+- Requires a valid JWT token in the Authorization header
+- Useful for frontend to retrieve user data after login
+
+This route depends on token-based authentication using the OAuth2 bearer scheme.
+"""
+
+@router.get("/me", response_model=UserResponse)
+def get_my_profile(current_user: User = Depends(get_current_user)):
+    """
+    Retrieve profile info of the currently authenticated user.
+    """
+    return current_user
