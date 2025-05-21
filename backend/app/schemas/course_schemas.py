@@ -1,6 +1,6 @@
-# schemas/course_schemas.py
 from pydantic import BaseModel
 from typing import Optional, Literal
+
 
 class CourseBase(BaseModel):
     code: Optional[str] = None
@@ -11,13 +11,12 @@ class CourseBase(BaseModel):
     status: Literal["in_progress", "approved", "failed"] = "in_progress"
     term_id: int
 
+
 class CourseCreate(CourseBase):
     pass
+
 
 class CourseResponse(CourseBase):
     id: int
 
-    model_config = {
-            "from_attributes": True
-        }
-        
+    model_config = {"from_attributes": True}

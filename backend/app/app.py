@@ -1,5 +1,3 @@
-# app.py
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
@@ -18,8 +16,9 @@ from app.routers import (
     term_router,
     course_router,
     assignment_router,
-    schedule_slot_router
+    schedule_slot_router,
 )
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -29,12 +28,13 @@ async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
     yield
 
+
 app = FastAPI(title="Academic Management API", lifespan=lifespan)
 
-# ✅ Add CORS middleware
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # 🔒 Cambia esto a tu dominio en producción
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

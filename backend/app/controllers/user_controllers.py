@@ -1,5 +1,3 @@
-# controllers/user_controllers.py
-
 from fastapi import HTTPException
 from app.schemas.user_schemas import UserCreate, ChangePasswordRequest
 from app.models.user import User
@@ -11,6 +9,7 @@ import bcrypt
 Handles user profile operations including updates and password changes.
 """
 
+
 def get_db():
     db = SessionLocal()
     try:
@@ -18,20 +17,25 @@ def get_db():
     finally:
         db.close()
 
+
 def hash_password(password: str) -> str:
     return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+
 
 def verify_password(plain: str, hashed: str) -> bool:
     return bcrypt.checkpw(plain.encode("utf-8"), hashed.encode("utf-8"))
 
+
 def get_all_users(db: Session = next(get_db())):
     return db.query(User).all()
+
 
 def get_user_by_id(user_id: int, db: Session = next(get_db())):
     user = db.get(User, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
+
 
 def update_user(user_id: int, user_data: UserCreate, db: Session = next(get_db())):
     user = db.get(User, user_id)
@@ -49,6 +53,7 @@ def update_user(user_id: int, user_data: UserCreate, db: Session = next(get_db()
     db.refresh(user)
     return user
 
+
 def delete_user(user_id: int, db: Session = next(get_db())):
     user = db.get(User, user_id)
     if not user:
@@ -58,10 +63,14 @@ def delete_user(user_id: int, db: Session = next(get_db())):
     db.commit()
     return {"message": "User deleted successfully"}
 
+
 def get_current_user():
     raise NotImplementedError("Will be implemented with auth/token system")
 
-def change_password(user_id: int, payload: ChangePasswordRequest, db: Session = next(get_db())):
+
+def change_password(
+    user_id: int, payload: ChangePasswordRequest, db: Session = next(get_db())
+):
     """
     Updates the user's password after validating current password.
     """

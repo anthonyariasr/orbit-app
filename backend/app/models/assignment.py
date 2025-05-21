@@ -1,7 +1,7 @@
-# models/assignment.py
 from sqlalchemy import Column, Integer, String, Date, Float, ForeignKey
 from sqlalchemy.orm import relationship
 from app.database.db_config import Base
+
 
 class Assignment(Base):
     __tablename__ = "assignments"

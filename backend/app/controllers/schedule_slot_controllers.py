@@ -1,5 +1,3 @@
-# controllers/schedule_slot_controllers.py
-
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 from app.database.db_config import SessionLocal
@@ -12,12 +10,14 @@ Handles logic for managing schedule slots assigned to courses.
 Each slot must reference an existing course.
 """
 
+
 def get_db():
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
+
 
 def validate_course(course_id: int, db: Session):
     """
@@ -27,6 +27,7 @@ def validate_course(course_id: int, db: Session):
     if not course:
         raise HTTPException(status_code=404, detail="Associated course not found")
 
+
 def create_schedule_slot(data: ScheduleSlotCreate, db: Session = next(get_db())):
     validate_course(data.course_id, db)
 
@@ -34,7 +35,7 @@ def create_schedule_slot(data: ScheduleSlotCreate, db: Session = next(get_db()))
         day_of_week=data.day_of_week,
         start_time=data.start_time,
         end_time=data.end_time,
-        course_id=data.course_id
+        course_id=data.course_id,
     )
 
     db.add(new_slot)
@@ -42,8 +43,10 @@ def create_schedule_slot(data: ScheduleSlotCreate, db: Session = next(get_db()))
     db.refresh(new_slot)
     return new_slot
 
+
 def get_all_schedule_slots(db: Session = next(get_db())):
     return db.query(ScheduleSlot).all()
+
 
 def get_schedule_slot_by_id(slot_id: int, db: Session = next(get_db())):
     slot = db.get(ScheduleSlot, slot_id)
@@ -51,11 +54,15 @@ def get_schedule_slot_by_id(slot_id: int, db: Session = next(get_db())):
         raise HTTPException(status_code=404, detail="Schedule slot not found")
     return slot
 
+
 def get_slots_by_course(course_id: int, db: Session = next(get_db())):
     validate_course(course_id, db)
     return db.query(ScheduleSlot).filter(ScheduleSlot.course_id == course_id).all()
 
-def update_schedule_slot(slot_id: int, updated_data: ScheduleSlotCreate, db: Session = next(get_db())):
+
+def update_schedule_slot(
+    slot_id: int, updated_data: ScheduleSlotCreate, db: Session = next(get_db())
+):
     slot = db.get(ScheduleSlot, slot_id)
     if not slot:
         raise HTTPException(status_code=404, detail="Schedule slot not found")
@@ -70,6 +77,7 @@ def update_schedule_slot(slot_id: int, updated_data: ScheduleSlotCreate, db: Ses
     db.commit()
     db.refresh(slot)
     return slot
+
 
 def delete_schedule_slot(slot_id: int, db: Session = next(get_db())):
     slot = db.get(ScheduleSlot, slot_id)

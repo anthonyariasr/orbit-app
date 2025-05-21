@@ -1,9 +1,9 @@
-# routers/term_router.py
-
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends
 from typing import List
 from app.schemas.term_schemas import TermCreate, TermResponse
 from app.controllers import term_controllers
+from app.dependencies.auth import get_current_user
+from app.models.user import User
 
 router = APIRouter(prefix="/terms", tags=["Terms"])
 
@@ -11,22 +11,26 @@ router = APIRouter(prefix="/terms", tags=["Terms"])
 TERM ROUTES
 
 Handles the creation, retrieval, update and deletion of academic terms.
+All operations are scoped to the authenticated user.
 """
 
+
 @router.post("/", response_model=TermResponse)
-def create_term(term: TermCreate):
+def create_term(term: TermCreate, current_user: User = Depends(get_current_user)):
     """
-    Create a new academic term.
+    Create a new academic term for the current user.
     A user should only have one active term at a time.
     """
-    return term_controllers.create_term(term)
+    return term_controllers.create_term(term, current_user)
+
 
 @router.get("/", response_model=List[TermResponse])
-def get_all_terms():
+def get_all_terms(current_user: User = Depends(get_current_user)):
     """
-    Retrieve a list of all academic terms in the system.
+    Retrieve all academic terms belonging to the current user.
     """
-    return term_controllers.get_all_terms()
+    return term_controllers.get_all_terms(current_user)
+
 
 @router.get("/{term_id}", response_model=TermResponse)
 def get_term_by_id(term_id: int):
@@ -35,12 +39,19 @@ def get_term_by_id(term_id: int):
     """
     return term_controllers.get_term_by_id(term_id)
 
+
 @router.put("/{term_id}", response_model=TermResponse)
-def update_term(term_id: int, updated_term: TermCreate):
+def update_term(
+    term_id: int,
+    updated_term: TermCreate,
+    current_user: User = Depends(get_current_user),
+):
     """
     Update the information of an academic term.
+    Ensures only one term can be active per user.
     """
-    return term_controllers.update_term(term_id, updated_term)
+    return term_controllers.update_term(term_id, updated_term, current_user)
+
 
 @router.delete("/{term_id}")
 def delete_term(term_id: int):
@@ -48,11 +59,3 @@ def delete_term(term_id: int):
     Delete an academic term by ID.
     """
     return term_controllers.delete_term(term_id)
-
-@router.get("/user/{user_id}", response_model=List[TermResponse])
-def get_terms_by_user(user_id: int):
-    """
-    Retrieve all academic terms created by a specific user.
-    """
-    return term_controllers.get_terms_by_user(user_id)
-

@@ -1,7 +1,7 @@
-# models/term.py
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 from app.database.db_config import Base
+
 
 class Term(Base):
     __tablename__ = "terms"
