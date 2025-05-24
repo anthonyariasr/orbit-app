@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from typing import List
-from app.schemas.course_schemas import CourseCreate, CourseResponse
+from app.schemas.course_schemas import CourseCreate, CourseResponse, CourseFinalize
 from app.controllers import course_controllers
 from app.dependencies.auth import get_current_user
 from app.models.user import User
@@ -67,3 +67,13 @@ def delete_course(course_id: int, current_user: User = Depends(get_current_user)
     Delete a course by its ID.
     """
     return course_controllers.delete_course(course_id, current_user)
+
+
+@router.patch("/{course_id}/finalize", response_model=CourseResponse)
+def finalize_course(
+    course_id: int, data: CourseFinalize, current_user: User = Depends(get_current_user)
+):
+    """
+    Finalize a course by setting its final status and optional grade.
+    """
+    return course_controllers.finalize_course(course_id, data, current_user)

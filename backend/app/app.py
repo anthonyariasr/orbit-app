@@ -17,6 +17,7 @@ from app.routers import (
     course_router,
     assignment_router,
     schedule_slot_router,
+    statistics_router
 )
 
 

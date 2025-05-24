@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, ForeignKey
 from sqlalchemy.orm import relationship
 from app.database.db_config import Base
 
@@ -14,5 +14,6 @@ class Course(Base):
     room = Column(String, nullable=True)
     status = Column(String, default="in_progress")  # "approved", "failed"
     term_id = Column(Integer, ForeignKey("terms.id"), nullable=False)
+    grade = Column(Float, nullable=True)
 
     term = relationship("Term", backref="courses")

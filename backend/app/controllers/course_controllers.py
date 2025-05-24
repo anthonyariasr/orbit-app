@@ -5,7 +5,7 @@ from app.database.db_config import SessionLocal
 from app.models.course import Course
 from app.models.term import Term
 from app.models.user import User
-from app.schemas.course_schemas import CourseCreate
+from app.schemas.course_schemas import CourseCreate, CourseFinalize
 
 
 """
@@ -137,3 +137,42 @@ def delete_course(course_id: int, current_user: User, db: Session = next(get_db(
     db.delete(course)
     db.commit()
     return {"message": "Course deleted successfully"}
+
+
+def finalize_course(
+    course_id: int,
+    data: CourseFinalize,
+    current_user: User,
+    db: Session = next(get_db()),
+):
+    """
+    Finalizes a course by updating its status and grade.
+    Only 'in_progress' courses can be finalized.
+    Grade is required and used later for weighted statistics.
+    """
+    course = db.get(Course, course_id)
+    if not course:
+        raise HTTPException(status_code=404, detail="Course not found")
+
+    term = db.get(Term, course.term_id)
+    if not term or term.user_id != current_user.id:
+        raise HTTPException(
+            status_code=403, detail="Not authorized to update this course"
+        )
+
+    if course.status != "in_progress":
+        raise HTTPException(
+            status_code=400, detail="Only in-progress courses can be finalized"
+        )
+
+    if data.grade is None:
+        raise HTTPException(
+            status_code=400, detail="Final grade is required to finalize a course"
+        )
+
+    course.status = data.status
+    course.grade = data.grade
+
+    db.commit()
+    db.refresh(course)
+    return course
