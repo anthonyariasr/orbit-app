@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -23,4 +24,25 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+
+/* Personaliza botones del calendario */
+.fc .fc-button {
+  background-color: #39439f;
+  border: none;
+  color: white;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.fc .fc-button:hover {
+  background-color: #2e336d;
+}
+
+.fc .fc-button:disabled {
+  background-color: #d1d5db; /* gris deshabilitado */
+  color: #6b7280;
 }
