@@ -2,7 +2,6 @@ from sqlalchemy import Column, Integer, String, Time, ForeignKey
 from sqlalchemy.orm import relationship
 from app.database.db_config import Base
 
-
 class ScheduleSlot(Base):
     __tablename__ = "schedule_slots"
 
@@ -10,6 +9,7 @@ class ScheduleSlot(Base):
     day_of_week = Column(String, nullable=False)  # Ej: "Monday", "Tuesday"
     start_time = Column(Time, nullable=False)
     end_time = Column(Time, nullable=False)
-    course_id = Column(Integer, ForeignKey("courses.id"), nullable=False)
+    
+    course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=False)
 
-    course = relationship("Course", backref="schedule_slots")
+    course = relationship("Course", back_populates="schedule_slots")

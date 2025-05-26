@@ -23,7 +23,7 @@ const TermCalendar = ({ events }: Props) => {
 
   return (
     <div className="w-full lg:ml-8 mt-4">
-      <h3 className="text-center lg:text-left text-xl font-bold text-[#5b5b5b] mt-10">
+      <h3 className="text-center lg:text-left text-xl font-bold text-[#4e4e4e] mt-10">
         Calendario Semanal
       </h3>
       <div className="bg-white mt-6 p-4 rounded-lg border-0 shadow-sm">

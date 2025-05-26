@@ -2,12 +2,11 @@ from sqlalchemy import Column, Integer, String, Float, ForeignKey
 from sqlalchemy.orm import relationship
 from app.database.db_config import Base
 
-
 class Course(Base):
     __tablename__ = "courses"
 
     id = Column(Integer, primary_key=True, index=True)
-    code = Column(String, unique=True, nullable=True)
+    code = Column(String, nullable=True)
     name = Column(String, nullable=False)
     credits = Column(Integer, nullable=False)
     professor_name = Column(String, nullable=True)
@@ -15,6 +14,11 @@ class Course(Base):
     status = Column(String, default="in_progress")  # "approved", "failed"
     term_id = Column(Integer, ForeignKey("terms.id"), nullable=False)
     grade = Column(Float, nullable=True)
-    
 
     term = relationship("Term", backref="courses")
+
+    schedule_slots = relationship(
+        "ScheduleSlot",
+        back_populates="course",
+        cascade="all, delete-orphan"
+    )

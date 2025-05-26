@@ -20,7 +20,7 @@ interface Props {
 
 const CourseList = ({ courses, onSelect }: Props) => (
   <div className="mt-4 flex flex-col">
-    <h3 className="text-center lg:text-left text-xl font-bold text-[#5b5b5b] mt-10">
+    <h3 className="text-center lg:text-left text-xl font-bold text-[#4e4e4e] mt-10">
       Cursos Matriculados: {courses.length}
     </h3>
 

@@ -32,12 +32,15 @@ def get_calendar_events_for_term(term_id: int, db: Session = Depends(get_db)):
     # 1. Assignments
     assignments = db.query(Assignment).filter(Assignment.term_id == term_id).all()
     for a in assignments:
+        # Usa directamente a.due_date como ya es tipo date
+        start = datetime.combine(a.due_date, datetime.strptime("06:00", "%H:%M").time())
+
         events.append(
             CalendarEvent(
                 title=f"{a.name}",
-                start=a.due_date,
+                start=start,
                 type="assignment",
-                color="#f59e0b",
+                color="#d4cdff",
             )
         )
 
@@ -74,11 +77,11 @@ def get_calendar_events_for_term(term_id: int, db: Session = Depends(get_db)):
 
                 events.append(
                     CalendarEvent(
-                        title=f"📚 {course.name}",
+                        title=f"{course.name}",
                         start=start,
                         end=end,
                         type="class",
-                        color="#39439f",
+                        color="#6063c4",
                     )
                 )
 

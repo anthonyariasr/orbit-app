@@ -31,6 +31,11 @@ export interface AssignmentPayload {
   term_id: number;
 }
 
+interface AssignmentWithCourseName extends Assignment {
+  course_name?: string;
+}
+
+
 /**Calendar */
 
 export interface CalendarEvent {

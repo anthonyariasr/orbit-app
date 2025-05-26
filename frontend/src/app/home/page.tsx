@@ -1,101 +1,63 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import AssignmentModal from "./components/AssignmentModal";
-import CourseList from "./components/CourseList";
-import CourseModal from "./components/CourseModal";
-import EmptyTermView from "./components/EmptyTermView";
+import { useState } from "react";
 import FloatingAddButton from "./components/FloatingAddButton ";
-import TermCalendar from "./components/TermCalendar";
-import TermHeader from "./components/TermHeader";
-import TermModal from "./components/TermModal";
-
-import { createTerm, getActiveTerm } from "@/lib/api/term";
-import { createCourse, getCoursesByTerm } from "@/lib/api/course";
-import { getCalendarEventsByTerm } from "@/lib/api/calendar";
-import { Term, CalendarEvent } from "@/lib/types";
+import EmptyTermView from "./components/EmptyTermView";
+import TermLayout from "./components/TermLayout";
+import Modals from "./components/Modals";
+import EditCourseModal from "./components/EditCourseModal";
+import EditAssignmentModal from "./components/EditAssignmentModal";
+import { useActiveTerm } from "@/hooks/useActiveTerm";
+import { useHomeModals } from "@/hooks/useHomeModals";
 
 const HomePage = () => {
-  const [term, setTerm] = useState<Term | null>(null);
-  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const {
+    term,
+    events,
+    assignments,
+    setTerm,
+    refreshCourses,
+    refreshCalendarEvents,
+    refreshAssignments,
+    finishTerm
+  } = useActiveTerm();
+
+  const {
+    isTermModalOpen,
+    setIsTermModalOpen,
+    isCourseModalOpen,
+    setIsCourseModalOpen,
+    isAssignmentModalOpen,
+    setIsAssignmentModalOpen,
+  } = useHomeModals();
+
   const [selectedCourse, setSelectedCourse] = useState<number | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isCourseModalOpen, setIsCourseModalOpen] = useState(false);
-  const [isAssignmentModalOpen, setIsAssignmentModalOpen] = useState(false);
-
-  // Cargar el término activo, cursos y eventos al montar
-  useEffect(() => {
-    const fetchTerm = async () => {
-      try {
-        const termResponse = await getActiveTerm();
-        const coursesResponse = await getCoursesByTerm(termResponse.id);
-        const calendarEvents = await getCalendarEventsByTerm(termResponse.id);
-
-        setTerm({
-          ...termResponse,
-          courses: coursesResponse,
-          progress: 0,
-        });
-
-        setEvents(calendarEvents);
-      } catch (error) {
-        console.log("No hay término activo o error al obtener los datos.");
-      }
-    };
-
-    fetchTerm();
-  }, []);
-
-  // Refrescar cursos
-  const refreshCourses = async () => {
-    if (!term) return;
-    try {
-      const updatedCourses = await getCoursesByTerm(term.id);
-      setTerm((prev) => prev && { ...prev, courses: updatedCourses });
-    } catch (error) {
-      console.error("Error al refrescar los cursos:", error);
-    }
-  };
-
-  // Refrescar eventos de calendario
-  const refreshCalendarEvents = async () => {
-    if (!term) return;
-    try {
-      const calendarEvents = await getCalendarEventsByTerm(term.id);
-      setEvents(calendarEvents);
-    } catch (error) {
-      console.error("Error al cargar eventos del calendario:", error);
-    }
-  };
-
-  const handleCreateTerm = async (data: { name: string }) => {
-    try {
-      const response = await createTerm(data);
-      setTerm({
-        id: response.id,
-        name: response.name,
-        is_active: response.is_active,
-        courses: [],
-        progress: 0,
-      });
-      setIsModalOpen(false);
-    } catch (error) {
-      console.error("Error al crear el término:", error);
-    }
-  };
+  const [selectedAssignmentId, setSelectedAssignmentId] = useState<
+    number | null
+  >(null);
+  const [isEditCourseModalOpen, setIsEditCourseModalOpen] = useState(false);
+  const [isEditAssignmentModalOpen, setIsEditAssignmentModalOpen] =
+    useState(false);
 
   return (
     <main className="flex-1 min-h-screen bg-[#F3F4F6] flex flex-col relative">
       {term ? (
-        <>
-          <TermHeader title={term.name} />
-          <div className="flex flex-col lg:flex-row px-8">
-            <CourseList courses={term.courses} onSelect={setSelectedCourse} />
-            <TermCalendar events={events} />
-          </div>
-        </>
+        <TermLayout
+          term={term}
+          events={events}
+          assignments={assignments}
+          onSelectCourse={(id) => {
+            setSelectedCourse(id);
+            setIsEditCourseModalOpen(true);
+          }}
+          onSelectAssignment={(id) => {
+            setSelectedAssignmentId(id);
+            setIsEditAssignmentModalOpen(true);
+          }}
+          onFinishTerm={finishTerm} 
+        />
       ) : (
-        <EmptyTermView onCreate={() => setIsModalOpen(true)} />
+        <EmptyTermView onCreate={() => setIsTermModalOpen(true)} />
       )}
 
       <FloatingAddButton
@@ -103,34 +65,41 @@ const HomePage = () => {
         onAddAssignment={() => setIsAssignmentModalOpen(true)}
       />
 
-      {term && (
-        <CourseModal
-          termId={term.id}
-          isOpen={isCourseModalOpen}
-          onClose={() => setIsCourseModalOpen(false)}
-          onSubmit={async (data) => {
-            try {
-              await createCourse(data);
-              await refreshCourses();
-              await refreshCalendarEvents();
-              setIsCourseModalOpen(false);
-            } catch (error) {
-              console.error("Error al crear curso:", error);
-            }
-          }}
-        />
-      )}
-
-      <AssignmentModal
-        isOpen={isAssignmentModalOpen}
-        onClose={() => setIsAssignmentModalOpen(false)}
-        onSubmit={(data) => console.log("📌 Nuevo pendiente:", data)}
+      <Modals
+        term={term}
+        setTerm={setTerm}
+        isModalOpen={isTermModalOpen}
+        setIsModalOpen={setIsTermModalOpen}
+        isCourseModalOpen={isCourseModalOpen}
+        setIsCourseModalOpen={setIsCourseModalOpen}
+        isAssignmentModalOpen={isAssignmentModalOpen}
+        setIsAssignmentModalOpen={setIsAssignmentModalOpen}
+        refreshCourses={refreshCourses}
+        refreshCalendarEvents={refreshCalendarEvents}
+        refreshAssignments={refreshAssignments}
       />
 
-      <TermModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSubmit={handleCreateTerm}
+      <EditCourseModal
+        isOpen={isEditCourseModalOpen}
+        courseId={selectedCourse}
+        termId={term?.id!}
+        onClose={() => setIsEditCourseModalOpen(false)}
+        onUpdated={async () => {
+          await refreshCourses();
+          await refreshCalendarEvents();
+        }}
+      />
+
+      <EditAssignmentModal
+        isOpen={isEditAssignmentModalOpen}
+        assignmentId={selectedAssignmentId}
+        courses={term?.courses ?? []}
+        termId={term?.id!}
+        onClose={() => setIsEditAssignmentModalOpen(false)}
+        onUpdated={async () => {
+          await refreshAssignments();
+          await refreshCalendarEvents();
+        }}
       />
     </main>
   );

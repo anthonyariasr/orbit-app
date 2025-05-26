@@ -1,6 +1,7 @@
-'use client';
+"use client";
 
 import { useState } from "react";
+import { Course } from "@/lib/types";
 
 interface AssignmentModalProps {
   isOpen: boolean;
@@ -8,26 +9,42 @@ interface AssignmentModalProps {
   onSubmit: (data: {
     name: string;
     due_date: string;
+    course_id: number;
   }) => void;
+  courses: Course[];
 }
 
-const AssignmentModal = ({ isOpen, onClose, onSubmit }: AssignmentModalProps) => {
-  const [form, setForm] = useState({
+const AssignmentModal = ({
+  isOpen,
+  onClose,
+  onSubmit,
+  courses,
+}: AssignmentModalProps) => {
+  const [form, setForm] = useState<{
+    name: string;
+    due_date: string;
+    course_id: number;
+  }>({
     name: "",
     due_date: "",
+    course_id: courses[0]?.id ?? 0, // preseleccionar el primero
   });
 
   if (!isOpen) return null;
 
-  const handleChange = (key: string, value: string) => {
+  const handleChange = (
+    key: "name" | "due_date" | "course_id",
+    value: string | number
+  ) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name || !form.due_date) return;
+    if (!form.name || !form.due_date || !form.course_id) return;
+
     onSubmit(form);
-    setForm({ name: "", due_date: "" });
+    setForm({ name: "", due_date: "", course_id: courses[0]?.id ?? 0 });
     onClose();
   };
 
@@ -38,7 +55,10 @@ const AssignmentModal = ({ isOpen, onClose, onSubmit }: AssignmentModalProps) =>
           Añadir Pendiente
         </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4 text-sm text-[#1E1E2F]">
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-4 text-sm text-[#1E1E2F]"
+        >
           <input
             type="text"
             placeholder="Nombre del pendiente"
@@ -55,6 +75,21 @@ const AssignmentModal = ({ isOpen, onClose, onSubmit }: AssignmentModalProps) =>
             className="w-full px-4 py-2 rounded-lg border border-[#E0E0E5] focus:ring-2 focus:ring-[#39439f]"
             required
           />
+
+          <select
+            value={form.course_id}
+            onChange={(e) =>
+              handleChange("course_id", Number(e.target.value))
+            }
+            className="w-full px-4 py-2 rounded-lg border border-[#E0E0E5] focus:ring-2 focus:ring-[#39439f]"
+            required
+          >
+            {courses.map((course) => (
+              <option key={course.id} value={course.id}>
+                {course.name}
+              </option>
+            ))}
+          </select>
 
           <div className="flex justify-end gap-2 pt-4">
             <button

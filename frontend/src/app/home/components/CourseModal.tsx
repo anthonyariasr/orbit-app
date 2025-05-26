@@ -81,7 +81,7 @@ const CourseModal = ({ isOpen, onClose, onSubmit, termId }: CourseModalProps) =>
   return (
     <div className="fixed inset-0 z-50 bg-[#39439f]/20 backdrop-blur-md backdrop-saturate-150 flex items-center justify-center px-4">
       <div className="bg-white rounded-xl shadow-xl w-full max-w-xl p-8 lg:py-12 max-h-[90vh] overflow-y-auto">
-        <h2 className="text-2xl font-bold text-[#39439f] mb-6 text-center lg:text-left">
+        <h2 className="text-2xl font-bold text-[#39439f] mb-6 text-center">
           Añadir curso
         </h2>
 
