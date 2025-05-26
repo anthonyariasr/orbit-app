@@ -17,7 +17,8 @@ from app.routers import (
     course_router,
     assignment_router,
     schedule_slot_router,
-    statistics_router
+    statistics_router,
+    calendar_router
 )
 
 
@@ -47,3 +48,5 @@ app.include_router(term_router.router)
 app.include_router(course_router.router)
 app.include_router(assignment_router.router)
 app.include_router(schedule_slot_router.router)
+app.include_router(statistics_router.router)
+app.include_router(calendar_router.router)

@@ -1,8 +1,10 @@
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Depends
+from typing import List
 from sqlalchemy.orm import Session
 from app.database.db_config import SessionLocal
 from app.models.assignment import Assignment
 from app.models.course import Course
+from app.models.term import Term
 from app.schemas.assignment_schemas import AssignmentCreate
 
 """
@@ -33,10 +35,15 @@ def create_assignment(data: AssignmentCreate, db: Session = next(get_db())):
     """
     Creates a new assignment, optionally linked to a course.
     """
-    validate_course_if_provided(data.course_id, db)
+
+    if data.course_id:
+        validate_course_if_provided(data.course_id, db)
 
     new_assignment = Assignment(
-        name=data.name, due_date=data.due_date, course_id=data.course_id
+        name=data.name,
+        due_date=data.due_date,
+        course_id=data.course_id,
+        term_id=data.term_id,
     )
 
     db.add(new_assignment)
@@ -62,12 +69,39 @@ def get_assignment_by_id(assignment_id: int, db: Session = next(get_db())):
     return assignment
 
 
-def get_assignments_by_course(course_id: int, db: Session = next(get_db())):
+def get_assignments_by_term(term_id: int, db: Session = Depends(get_db)) -> List[dict]:
     """
-    Retrieves all assignments associated with a specific course.
+    Returns assignment events formatted for the calendar view.
     """
-    validate_course_if_provided(course_id, db)
-    return db.query(Assignment).filter(Assignment.course_id == course_id).all()
+    term = db.query(Term).filter(Term.id == term_id).first()
+    if not term:
+        raise HTTPException(status_code=404, detail="Término no encontrado")
+
+    assignments = db.query(Assignment).filter(Assignment.term_id == term_id).all()
+
+    return [
+        {
+            "id": a.id,
+            "title": f"📝 {a.name}",
+            "start": a.due_date.isoformat(),
+            "type": "assignment",
+            "color": "#205077",
+        }
+        for a in assignments
+    ]
+
+
+def get_assignments_by_term(term_id: int, db: Session = next(get_db())):
+    """
+    Retrieves all assignments associated with a specific term,
+    including those not linked to a specific course.
+    """
+    # (Opcional) validar que el término exista
+    term = db.query(Term).filter(Term.id == term_id).first()
+    if not term:
+        raise HTTPException(status_code=404, detail="Término no encontrado")
+
+    return db.query(Assignment).filter(Assignment.term_id == term_id).all()
 
 
 def update_assignment(
@@ -85,6 +119,7 @@ def update_assignment(
     assignment.name = updated_data.name
     assignment.due_date = updated_data.due_date
     assignment.course_id = updated_data.course_id
+    assignment.term_id = updated_data.term_id
 
     db.commit()
     db.refresh(assignment)

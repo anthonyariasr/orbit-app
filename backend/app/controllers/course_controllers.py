@@ -1,10 +1,13 @@
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Depends
+from typing import List
+from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from app.database.db_config import SessionLocal
 from app.models.course import Course
 from app.models.term import Term
 from app.models.user import User
+from app.models.schedule_slot import ScheduleSlot
 from app.schemas.course_schemas import CourseCreate, CourseFinalize
 
 
@@ -33,16 +36,8 @@ def validate_term(term_id: int, db: Session):
     return term
 
 
-def create_course(
-    course_data: CourseCreate, current_user: User, db: Session = next(get_db())
-):
-    term = db.get(Term, course_data.term_id)
-    if not term:
-        raise HTTPException(status_code=404, detail="Associated term not found")
-    if term.user_id != current_user.id:
-        raise HTTPException(
-            status_code=403, detail="Not authorized to add course to this term"
-        )
+def create_course(course_data: CourseCreate, db: Session):
+    print(course_data)
 
     new_course = Course(
         code=course_data.code,
@@ -52,23 +47,39 @@ def create_course(
         room=course_data.room,
         status=course_data.status,
         term_id=course_data.term_id,
+        grade=course_data.grade,
     )
 
-    try:
-        db.add(new_course)
+    db.add(new_course)
+    db.commit()
+    db.refresh(new_course)
+
+    # Crea los schedule_slots si vienen en el payload
+    if course_data.schedule_slots:
+        for slot in course_data.schedule_slots:
+            db.add(
+                ScheduleSlot(
+                    day_of_week=slot.day_of_week,
+                    start_time=slot.start_time,
+                    end_time=slot.end_time,
+                    course_id=new_course.id,  # ahora sí lo tenemos
+                )
+            )
         db.commit()
-        db.refresh(new_course)
-        return new_course
-    except IntegrityError:
-        db.rollback()
-        raise HTTPException(status_code=400, detail="Course code must be unique")
+
+    return new_course
 
 
-def get_all_courses(db: Session = next(get_db())):
+def get_all_courses(current_user: User, db: Session = Depends(get_db)):
     """
     Returns all courses in the system.
     """
-    return db.query(Course).all()
+    return (
+        db.query(Course)
+        .options(joinedload(Course.schedule_slots))
+        .filter(Course.user_id == current_user.id)
+        .all()
+    )
 
 
 def get_course_by_id(course_id: int, db: Session = next(get_db())):
@@ -81,12 +92,15 @@ def get_course_by_id(course_id: int, db: Session = next(get_db())):
     return course
 
 
-def get_courses_by_term(term_id: int, db: Session = next(get_db())):
+def get_courses_by_term(term_id: int, db: Session):
     """
-    Returns all courses associated with a specific term.
+    Returns all courses for a specific term as CourseResponse.
     """
     validate_term(term_id, db)
-    return db.query(Course).filter(Course.term_id == term_id).all()
+    
+    courses = db.query(Course).filter(Course.term_id == term_id).all()
+    
+    return courses  # Cada objeto debe tener la relación .schedule_slots lista
 
 
 def update_course(

@@ -4,8 +4,19 @@ from app.schemas.course_schemas import CourseCreate, CourseResponse, CourseFinal
 from app.controllers import course_controllers
 from app.dependencies.auth import get_current_user
 from app.models.user import User
+from app.database.db_config import SessionLocal
+from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/courses", tags=["Courses"])
+
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 
 """
 COURSE ROUTES
@@ -18,11 +29,11 @@ Handles operations related to academic courses:
 
 
 @router.post("/", response_model=CourseResponse)
-def create_course(course: CourseCreate, current_user: User = Depends(get_current_user)):
+def create_course(course: CourseCreate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     """
     Create a new course within a given academic term.
     """
-    return course_controllers.create_course(course, current_user)
+    return course_controllers.create_course(course, db)
 
 
 @router.get("/", response_model=List[CourseResponse])
@@ -42,11 +53,8 @@ def get_course_by_id(course_id: int):
 
 
 @router.get("/term/{term_id}", response_model=List[CourseResponse])
-def get_courses_by_term(term_id: int):
-    """
-    Retrieve all courses associated with a specific term.
-    """
-    return course_controllers.get_courses_by_term(term_id)
+def get_courses_by_term(term_id: int, db: Session = Depends(get_db)):
+    return course_controllers.get_courses_by_term(term_id, db)
 
 
 @router.put("/{course_id}", response_model=CourseResponse)

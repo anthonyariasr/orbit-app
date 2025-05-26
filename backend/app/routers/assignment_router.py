@@ -30,6 +30,15 @@ def get_all_assignments():
     return assignment_controllers.get_all_assignments()
 
 
+@router.get("/term/{term_id}", response_model=List[AssignmentResponse])
+def get_assignments_by_term(term_id: int):
+    """
+    Retrieve all assignments associated with a specific term,
+    including those not linked to any course.
+    """
+    return assignment_controllers.get_assignments_by_term(term_id)
+
+
 @router.get("/{assignment_id}", response_model=AssignmentResponse)
 def get_assignment_by_id(assignment_id: int):
     """

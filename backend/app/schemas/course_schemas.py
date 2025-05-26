@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
-from typing import Optional, Literal
-
+from typing import Optional, Literal, List
+from datetime import time
+from .schedule_slot_schemas import ScheduleSlotCreate, ScheduleSlotResponse
 
 class CourseBase(BaseModel):
     code: Optional[str] = None
@@ -14,15 +15,27 @@ class CourseBase(BaseModel):
 
 
 class CourseCreate(CourseBase):
-    grade: None = None  
+    schedule_slots: Optional[List[ScheduleSlotCreate]] = []
 
 
-class CourseResponse(CourseBase):
+class CourseResponse(BaseModel):
     id: int
+    code: Optional[str]
+    name: str
+    credits: int
+    professor_name: Optional[str]
+    room: Optional[str]
+    status: str
+    term_id: int
+    grade: Optional[float]
+    schedule_slots: List[ScheduleSlotResponse] = []
 
-    model_config = {"from_attributes": True}
+    class Config:
+        orm_mode = True
 
 
 class CourseFinalize(BaseModel):
     status: Literal["approved", "failed"]
     grade: float = Field(..., ge=0, le=100, description="Final grade (required)")
+
+

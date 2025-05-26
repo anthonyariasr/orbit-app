@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-DATABASE_URL = "sqlite:///./test.db"
+DATABASE_URL = "sqlite:///./mock.db"
 
 # DATABASE_URL = os.getenv("DATABASE_URL")
 # Example: postgresql://user:password@localhost:5432/dbname

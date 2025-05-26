@@ -7,6 +7,7 @@ class AssignmentBase(BaseModel):
     name: str
     due_date: date
     course_id: Optional[int] = None
+    term_id: int
 
 
 class AssignmentCreate(AssignmentBase):

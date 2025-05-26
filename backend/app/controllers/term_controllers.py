@@ -60,6 +60,15 @@ def get_term_by_id(term_id: int, db: Session = next(get_db())):
     return term
 
 
+def get_active_term(user: User):
+    return (
+        SessionLocal()
+        .query(Term)
+        .filter(Term.user_id == user.id, Term.is_active == True)
+        .first()
+    )
+
+
 def update_term(
     term_id: int,
     updated_data: TermCreate,

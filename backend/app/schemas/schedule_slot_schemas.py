@@ -9,7 +9,6 @@ class ScheduleSlotBase(BaseModel):
     ]
     start_time: time
     end_time: time
-    course_id: int
 
 
 class ScheduleSlotCreate(ScheduleSlotBase):

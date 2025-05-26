@@ -10,5 +10,7 @@ class Assignment(Base):
     name = Column(String, nullable=False)
     due_date = Column(Date, nullable=False)
     course_id = Column(Integer, ForeignKey("courses.id"), nullable=True)
+    term_id = Column(Integer, ForeignKey("terms.id"), nullable=False)
 
     course = relationship("Course", backref="assignments")
+    term = relationship("Term", backref="assignments")

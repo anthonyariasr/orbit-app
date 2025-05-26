@@ -15,5 +15,6 @@ class Course(Base):
     status = Column(String, default="in_progress")  # "approved", "failed"
     term_id = Column(Integer, ForeignKey("terms.id"), nullable=False)
     grade = Column(Float, nullable=True)
+    
 
     term = relationship("Term", backref="courses")

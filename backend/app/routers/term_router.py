@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from typing import List
 from app.schemas.term_schemas import TermCreate, TermResponse
 from app.controllers import term_controllers
@@ -30,6 +30,17 @@ def get_all_terms(current_user: User = Depends(get_current_user)):
     Retrieve all academic terms belonging to the current user.
     """
     return term_controllers.get_all_terms(current_user)
+
+
+@router.get("/active", response_model=TermResponse)
+def get_active_term(current_user: User = Depends(get_current_user)):
+    """
+    Retrieve the active academic term for the current user.
+    """
+    term = term_controllers.get_active_term(current_user)
+    if not term:
+        raise HTTPException(status_code=404, detail="No hay término activo")
+    return term
 
 
 @router.get("/{term_id}", response_model=TermResponse)
