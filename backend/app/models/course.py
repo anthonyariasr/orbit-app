@@ -11,11 +11,12 @@ class Course(Base):
     credits = Column(Integer, nullable=False)
     professor_name = Column(String, nullable=True)
     room = Column(String, nullable=True)
-    status = Column(String, default="in_progress")  # "approved", "failed"
-    term_id = Column(Integer, ForeignKey("terms.id"), nullable=False)
+    status = Column(String, default="in_progress")
+    term_id = Column(Integer, ForeignKey("terms.id", ondelete="CASCADE"), nullable=False)
     grade = Column(Float, nullable=True)
 
-    term = relationship("Term", backref="courses")
+
+    term = relationship("Term", back_populates="courses")
 
     schedule_slots = relationship(
         "ScheduleSlot",

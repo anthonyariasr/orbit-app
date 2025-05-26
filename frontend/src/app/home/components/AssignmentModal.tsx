@@ -20,17 +20,11 @@ const AssignmentModal = ({
   onSubmit,
   courses,
 }: AssignmentModalProps) => {
-  const [form, setForm] = useState<{
-    name: string;
-    due_date: string;
-    course_id: number;
-  }>({
+  const [form, setForm] = useState({
     name: "",
     due_date: "",
-    course_id: courses[0]?.id ?? 0, // preseleccionar el primero
+    course_id: 0, // default sin cursos
   });
-
-  if (!isOpen) return null;
 
   const handleChange = (
     key: "name" | "due_date" | "course_id",
@@ -42,71 +36,91 @@ const AssignmentModal = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name || !form.due_date || !form.course_id) return;
-
     onSubmit(form);
-    setForm({ name: "", due_date: "", course_id: courses[0]?.id ?? 0 });
+    setForm({ name: "", due_date: "", course_id: 0 });
     onClose();
   };
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 bg-[#39439f]/20 backdrop-blur-md flex items-center justify-center px-4">
       <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-8 lg:py-16 max-h-[90vh] overflow-y-auto">
-        <h2 className="text-2xl font-bold text-[#39439f] mb-6 text-center lg:text-left">
+        <h2 className="text-2xl font-bold text-[#39439f] mb-6 text-center">
           Añadir Pendiente
         </h2>
 
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-4 text-sm text-[#1E1E2F]"
-        >
-          <input
-            type="text"
-            placeholder="Nombre del pendiente"
-            value={form.name}
-            onChange={(e) => handleChange("name", e.target.value)}
-            className="w-full px-4 py-2 rounded-lg border border-[#E0E0E5] focus:ring-2 focus:ring-[#39439f]"
-            required
-          />
-
-          <input
-            type="date"
-            value={form.due_date}
-            onChange={(e) => handleChange("due_date", e.target.value)}
-            className="w-full px-4 py-2 rounded-lg border border-[#E0E0E5] focus:ring-2 focus:ring-[#39439f]"
-            required
-          />
-
-          <select
-            value={form.course_id}
-            onChange={(e) =>
-              handleChange("course_id", Number(e.target.value))
-            }
-            className="w-full px-4 py-2 rounded-lg border border-[#E0E0E5] focus:ring-2 focus:ring-[#39439f]"
-            required
-          >
-            {courses.map((course) => (
-              <option key={course.id} value={course.id}>
-                {course.name}
-              </option>
-            ))}
-          </select>
-
-          <div className="flex justify-end gap-2 pt-4">
+        {courses.length === 0 ? (
+          <div className="text-center text-gray-600">
+            <p className="mb-4">
+              No hay cursos disponibles. Crea un curso antes de añadir un
+              pendiente.
+            </p>
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm border border-[#39439f] text-[#39439f] rounded-lg hover:bg-[#f0f1ff]"
+              className="px-4 py-2 border border-[#39439f] text-[#39439f] rounded-lg hover:bg-[#f0f1ff]"
             >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              className="bg-[#39439f] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#2e336d] font-medium"
-            >
-              Guardar
+              Cerrar
             </button>
           </div>
-        </form>
+        ) : (
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-4 text-sm text-[#1E1E2F]"
+          >
+            <input
+              type="text"
+              placeholder="Nombre del pendiente"
+              value={form.name}
+              onChange={(e) => handleChange("name", e.target.value)}
+              className="w-full px-4 py-2 rounded-lg border border-[#E0E0E5] focus:ring-2 focus:ring-[#39439f]"
+              required
+            />
+
+            <input
+              type="date"
+              value={form.due_date}
+              onChange={(e) => handleChange("due_date", e.target.value)}
+              className="w-full px-4 py-2 rounded-lg border border-[#E0E0E5] focus:ring-2 focus:ring-[#39439f]"
+              required
+            />
+
+            <select
+              value={form.course_id}
+              onChange={(e) =>
+                handleChange("course_id", Number(e.target.value))
+              }
+              className="w-full px-4 py-2 rounded-lg border border-[#E0E0E5] focus:ring-2 focus:ring-[#39439f]"
+              required
+            >
+              <option value={0} disabled>
+                Selecciona un curso
+              </option>
+              {courses.map((course) => (
+                <option key={course.id} value={course.id}>
+                  {course.name}
+                </option>
+              ))}
+            </select>
+
+            <div className="flex justify-end gap-2 pt-4">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 text-sm border border-[#39439f] text-[#39439f] rounded-lg hover:bg-[#f0f1ff]"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                className="bg-[#39439f] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#2e336d] font-medium"
+              >
+                Guardar
+              </button>
+            </div>
+          </form>
+        )}
       </div>
     </div>
   );

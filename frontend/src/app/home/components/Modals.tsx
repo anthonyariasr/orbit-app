@@ -65,18 +65,17 @@ const Modals = ({
   const handleCreateAssignment = async (data: {
     name: string;
     due_date: string;
-    course_id: number | "";
+    course_id: number;
   }) => {
     if (!term) return;
     try {
       await createAssignment({
         ...data,
         term_id: term.id,
-        course_id: data.course_id === "" ? null : data.course_id,
       });
-      await refreshAssignments();         // ✅ Actualiza tareas
-      await refreshCalendarEvents();      // ✅ Actualiza eventos
-      setIsAssignmentModalOpen(false);    // ✅ Cierra modal después
+      await refreshAssignments();
+      await refreshCalendarEvents();
+      setIsAssignmentModalOpen(false);
     } catch (error) {
       console.error("Error al crear pendiente:", error);
     }

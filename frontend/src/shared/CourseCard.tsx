@@ -13,6 +13,8 @@ interface CourseCardProps {
     status: "in_progress" | "approved" | "failed";
   };
   onClick?: (id: number) => void;
+  editable?: boolean;
+  showDetails?: boolean;
 }
 
 const statusColors: Record<string, string> = {
@@ -27,17 +29,30 @@ const statusLabels: Record<string, string> = {
   failed: "Reprobado",
 };
 
-const CourseCard: React.FC<CourseCardProps> = ({ course, onClick }) => {
+const CourseCard: React.FC<CourseCardProps> = ({
+  course,
+  onClick,
+  editable = true,
+  showDetails = true,
+}) => {
   const borderColor = statusColors[course.status] || "#39439f";
+
+  const handleClick = () => {
+    if (editable && onClick) {
+      onClick(course.id);
+    }
+  };
 
   return (
     <div
-      onClick={() => onClick?.(course.id)}
-      className="cursor-pointer bg-white rounded-lg px-5 py-6 border-l-4 shadow-sm hover:shadow-md transition-shadow duration-200"
+      onClick={handleClick}
+      className={`bg-white rounded-lg px-5 py-6 border-l-4 shadow-sm transition-shadow duration-200 min-h-[180px] ${
+        editable ? "cursor-pointer hover:shadow-md" : "cursor-default"
+      }`}
       style={{ borderLeftColor: "#39439f" }}
     >
       <div className="flex items-center justify-between mb-1">
-        <h3 className="text-base font-semibold text-[#1E1E2F]">
+        <h3 className="text-base font-semibold text-[#1E1E2F] line-clamp-2">
           {course.name}
         </h3>
         <span
@@ -52,12 +67,13 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, onClick }) => {
         {course.code}
       </p>
 
-      {course.professor_name && (
+      {showDetails && course.professor_name && (
         <p className="text-sm text-gray-600">Profesor: {course.professor_name}</p>
       )}
-      {course.room && (
+      {showDetails && course.room && (
         <p className="text-sm text-gray-600">Aula: {course.room}</p>
       )}
+
       <p className="text-sm text-gray-600">Créditos: {course.credits}</p>
     </div>
   );

@@ -27,7 +27,7 @@ const CourseList = ({ courses, onSelect }: Props) => (
     <div className="mt-6 flex flex-col gap-4 lg:w-80 lg:mb-20">
       {courses.length > 0 ? (
         courses.map((course) => (
-          <CourseCard key={course.id} course={course} onClick={onSelect} />
+          <CourseCard key={course.id} course={course} onClick={onSelect}  editable={true} showDetails={true}/>
         ))
       ) : (
         <div className="flex flex-col items-center justify-center text-center border-2 border-dashed border-gray-300 rounded-xl py-12 text-[#9CA3AF]">

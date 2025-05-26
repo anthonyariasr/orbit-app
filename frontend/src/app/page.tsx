@@ -9,11 +9,11 @@ export default function Home() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      router.replace("/home"); // o tu vista principal
+      router.replace("/home"); 
     } else {
       router.replace("/login");
     }
   }, [router]);
 
-  return null; // nada se muestra
+  return null;
 }

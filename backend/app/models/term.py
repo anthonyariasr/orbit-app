@@ -12,3 +12,11 @@ class Term(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
     user = relationship("User", backref="terms")
+
+    courses = relationship(
+        "Course", back_populates="term", cascade="all, delete", passive_deletes=True
+    )
+
+    assignments = relationship(
+        "Assignment", back_populates="term", cascade="all, delete", passive_deletes=True
+    )

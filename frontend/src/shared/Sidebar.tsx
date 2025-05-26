@@ -1,33 +1,33 @@
-'use client';
+"use client";
 
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
+import Cookies from "js-cookie";
 import {
   Home,
   CalendarClock,
   BarChart2,
   Settings,
   Orbit,
-  LogOut
+  LogOut,
 } from "lucide-react";
 
 const navItems = [
-  { name: "Inicio", href: "/", icon: <Home size={18} /> },
+  { name: "Inicio", href: "/home", icon: <Home size={18} /> },
   { name: "Términos", href: "/terms", icon: <CalendarClock size={18} /> },
   { name: "Estadísticas", href: "/stats", icon: <BarChart2 size={18} /> },
   { name: "Perfil", href: "/profile", icon: <Settings size={18} /> },
 ];
 
 const Sidebar = () => {
-  const router = useRouter(); 
+  const router = useRouter();
   const pathname = usePathname();
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    Cookies.remove("access_token"); // ✅ Elimina la cookie del JWT
     router.push("/login");
-
   };
 
   return (
@@ -43,9 +43,10 @@ const Sidebar = () => {
               <Link
                 href={item.href}
                 className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition
-                ${pathname === item.href
-                  ? "bg-[#E8E9F1] text-[#39439f]"
-                  : "text-[#1E1E2F] hover:bg-[#E8E9F1]"
+                ${
+                  pathname === item.href
+                    ? "bg-[#E8E9F1] text-[#39439f]"
+                    : "text-[#1E1E2F] hover:bg-[#E8E9F1]"
                 }`}
               >
                 {item.icon}

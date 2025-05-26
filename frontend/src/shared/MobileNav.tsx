@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
+import Cookies from "js-cookie";
 import {
   Home,
   CalendarClock,
@@ -26,11 +27,8 @@ const MobileNav = () => {
   const pathname = usePathname();
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-
+    Cookies.remove("access_token");
     router.push("/login");
-
-    setOpen(false);
   };
 
   return (
