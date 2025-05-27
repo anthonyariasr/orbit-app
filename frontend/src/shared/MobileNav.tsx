@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 
 const navItems = [
-  { name: "Inicio", href: "/", icon: <Home size={18} /> },
+  { name: "Inicio", href: "/home", icon: <Home size={18} /> },
   { name: "Términos", href: "/terms", icon: <CalendarClock size={18} /> },
   { name: "Estadísticas", href: "/stats", icon: <BarChart2 size={18} /> },
   { name: "Perfil", href: "/profile", icon: <Settings size={18} /> },

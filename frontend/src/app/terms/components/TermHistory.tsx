@@ -45,7 +45,7 @@ const TermHistory = () => {
   };
 
   return (
-    <div className="">
+    <div className="pb-6">
       <TermHeader title="Historial académico" />
 
       {terms.map((term) => (

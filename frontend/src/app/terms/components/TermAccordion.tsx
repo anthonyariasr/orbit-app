@@ -54,14 +54,14 @@ const TermAccordion: React.FC<TermAccordionProps> = ({ termId, title, onEdit }) 
       </div>
 
       {isOpen && (
-        <div className="px-5 p-6">
+        <div className="px-2 lg:px-6 p-6">
           {loading ? (
             <p className="text-sm text-gray-500">Cargando cursos...</p>
           ) : courses.length > 0 ? (
             <div className="grid justify-center gap-6 grid-cols-[repeat(auto-fit,_minmax(320px,_1fr))]">
               {courses.map((course) => (
                 <div key={course.id} className="w-80">
-                  <CourseCard course={course} editable={false} showDetails={false} />
+                  <CourseCard course={course} editable={true} showDetails={false} />
                 </div>
               ))}
             </div>
