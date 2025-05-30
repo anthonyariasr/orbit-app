@@ -5,6 +5,7 @@ import { ChevronDown, ChevronUp, Pencil } from "lucide-react";
 import { getCoursesByTerm } from "@/lib/api/course";
 import { Course } from "@/lib/types";
 import CourseCard from "@/shared/CourseCard";
+import EditCourseModal from "@/shared/EditCourseModal";
 
 interface TermAccordionProps {
   termId: number;
@@ -17,28 +18,36 @@ const TermAccordion: React.FC<TermAccordionProps> = ({ termId, title, onEdit }) 
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        const data = await getCoursesByTerm(termId);
-        setCourses(data);
-      } catch (err) {
-        console.error("Error cargando cursos:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [selectedCourseId, setSelectedCourseId] = useState<number | null>(null);
 
+  const fetchCourses = async () => {
+    try {
+      const data = await getCoursesByTerm(termId);
+      setCourses(data);
+    } catch (err) {
+      console.error("Error cargando cursos:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchCourses();
   }, [termId]);
 
+  const handleCourseClick = (id: number) => {
+    setSelectedCourseId(id);
+    setIsEditOpen(true);
+  };
+
   return (
-    <div className="border rounded-xl my-6 mx-8 shadow-sm bg-[#e5e8fc]">
+    <div className="border rounded-xl my-6 mx-6 lg:mx-8 shadow-sm bg-[#e5e8fc]">
       <div
         className="flex justify-between items-center px-5 py-4 cursor-pointer border-b bg-white rounded-xl"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <div className="flex items-center gap-2 ">
+        <div className="flex items-center gap-2">
           <h2 className="text-lg font-semibold text-[#2c3e50]">{title}</h2>
           {isOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
         </div>
@@ -61,7 +70,12 @@ const TermAccordion: React.FC<TermAccordionProps> = ({ termId, title, onEdit }) 
             <div className="grid justify-center gap-6 grid-cols-[repeat(auto-fit,_minmax(320px,_1fr))]">
               {courses.map((course) => (
                 <div key={course.id} className="w-80">
-                  <CourseCard course={course} editable={true} showDetails={false} />
+                  <CourseCard
+                    course={course}
+                    editable={true}
+                    showDetails={false}
+                    onClick={handleCourseClick}
+                  />
                 </div>
               ))}
             </div>
@@ -70,6 +84,14 @@ const TermAccordion: React.FC<TermAccordionProps> = ({ termId, title, onEdit }) 
           )}
         </div>
       )}
+
+      <EditCourseModal
+        isOpen={isEditOpen}
+        onClose={() => setIsEditOpen(false)}
+        courseId={selectedCourseId}
+        termId={termId}
+        onUpdated={fetchCourses}
+      />
     </div>
   );
 };

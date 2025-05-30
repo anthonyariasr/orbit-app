@@ -36,7 +36,7 @@ app = FastAPI(title="Academic Management API", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*", "http://192.168.1.103:3000"],
+    allow_origins=["*", "http://192.168.1.103:3000", "http://172.24.71.157:3001"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

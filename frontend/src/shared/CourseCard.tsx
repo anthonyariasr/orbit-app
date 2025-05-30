@@ -11,6 +11,7 @@ interface CourseCardProps {
     professor_name?: string;
     room?: string;
     status: "in_progress" | "approved" | "failed";
+    grade?: number; // ← añadimos el campo opcional para nota
   };
   onClick?: (id: number) => void;
   editable?: boolean;
@@ -75,6 +76,9 @@ const CourseCard: React.FC<CourseCardProps> = ({
       )}
 
       <p className="text-sm text-gray-600">Créditos: {course.credits}</p>
+      <p className="text-sm text-gray-600">
+        Nota: {course.grade !== null ? course.grade : "no registrada"}
+      </p>
     </div>
   );
 };

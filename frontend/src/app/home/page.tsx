@@ -5,7 +5,7 @@ import FloatingAddButton from "./components/FloatingAddButton ";
 import EmptyTermView from "./components/EmptyTermView";
 import TermLayout from "./components/TermLayout";
 import Modals from "./components/Modals";
-import EditCourseModal from "./components/EditCourseModal";
+import EditCourseModal from "../../shared/EditCourseModal";
 import EditAssignmentModal from "./components/EditAssignmentModal";
 import { useActiveTerm } from "@/hooks/useActiveTerm";
 import { useHomeModals } from "@/hooks/useHomeModals";
@@ -42,7 +42,7 @@ const HomePage = () => {
 
   return (
     <AuthGuard>
-      <main className="flex-1 min-h-screen bg-[#F3F4F6] flex flex-col relative">
+      <main className="flex-1 min-h-screen bg-[#F3F4F6] flex flex-col relative pb-6">
         {term ? (
           <TermLayout
             term={term}

@@ -48,7 +48,7 @@ const EditCourseModal = ({
           professor_name: course.professor_name ?? "",
           room: course.room ?? "",
           status: course.status ?? "in_progress",
-          grade: course.grade?.toString() ?? "",
+          grade: course.grade != null ? course.grade.toString() : "",
         });
       } catch (err) {
         console.error("Error al cargar curso:", err);
@@ -66,6 +66,10 @@ const EditCourseModal = ({
     e.preventDefault();
     if (!courseId) return;
 
+    const parsedGrade = Number(form.grade);
+    const grade =
+      form.grade !== "" && !isNaN(parsedGrade) ? parsedGrade : undefined;
+
     try {
       await updateCourse(courseId, {
         term_id: termId,
@@ -75,7 +79,7 @@ const EditCourseModal = ({
         professor_name: form.professor_name,
         room: form.room,
         status: form.status,
-        grade: form.grade ? Number(form.grade) : undefined,
+        grade,
       });
       onUpdated();
       onClose();

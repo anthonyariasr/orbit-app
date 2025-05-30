@@ -1,7 +1,7 @@
-from fastapi import HTTPException, status, Depends
+from fastapi import HTTPException, Depends
 from typing import List
 from datetime import datetime, timedelta
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.exc import IntegrityError
 from app.database.db_config import SessionLocal
 from app.models.course import Course
@@ -131,6 +131,7 @@ def update_course(
     course.room = updated_data.room
     course.status = updated_data.status
     course.term_id = updated_data.term_id
+    course.grade = updated_data.grade
 
     db.commit()
     db.refresh(course)
