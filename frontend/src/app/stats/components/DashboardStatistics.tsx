@@ -32,6 +32,7 @@ export default function DashboardStatistics() {
         statusRes,
         creditsRes,
       ] = await Promise.all([
+        //OPTIMIZAR A UN SOLO LLAMADO DESDE EL BACK-END
         api.get("/statistics/average-credits-per-term"),
         api.get("/statistics/average-credits-per-course"),
         api.get("/statistics/weighted-grade-average"),
