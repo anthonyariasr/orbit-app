@@ -1,8 +1,6 @@
-// src/app/profile/components/EditUserModal.tsx
-"use client";
-
+import { useUser } from "@/hooks/useUser";
 import { useState, useEffect } from "react";
-import { User } from "@/lib/types";
+import { User, UserPayload } from "@/lib/types";
 
 interface Props {
   user: User;
@@ -12,20 +10,48 @@ interface Props {
 }
 
 export default function EditUserModal({ user, isOpen, onClose, onUpdate }: Props) {
-  const [form, setForm] = useState<User>(user);
+  const [form, setForm] = useState<UserPayload>({
+    username: user.username,
+    email: user.email,
+    career: user.career,
+    gender: user.gender,
+    university: user.university ?? "",
+  });
+
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const { updateUser } = useUser();
 
   useEffect(() => {
-    if (user) setForm(user);
+    if (user) {
+      setForm({
+        username: user.username,
+        email: user.email,
+        career: user.career,
+        gender: user.gender,
+        university: user.university ?? "",
+      });
+    }
   }, [user]);
 
-  const handleChange = (key: keyof User, value: string) => {
+  const handleChange = (key: keyof UserPayload, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onUpdate(form);
-    onClose();
+    setLoading(true);
+
+    const result = await updateUser(user.id, form);
+    setLoading(false);
+
+    if (result.success) {
+      onUpdate(result.data);
+      setError(null);
+      onClose();
+    } else {
+      setError(result.error);
+    }
   };
 
   if (!isOpen) return null;
@@ -36,6 +62,7 @@ export default function EditUserModal({ user, isOpen, onClose, onUpdate }: Props
         <h2 className="text-2xl font-bold text-[#39439f] mb-6 text-center">
           Editar información
         </h2>
+
         <form onSubmit={handleSubmit} className="space-y-4 text-sm text-[#1E1E2F]">
           <input
             type="text"
@@ -78,19 +105,24 @@ export default function EditUserModal({ user, isOpen, onClose, onUpdate }: Props
             placeholder="Universidad (opcional)"
             className="w-full px-4 py-2 rounded-lg border border-[#E0E0E5] focus:ring-2 focus:ring-[#39439f]"
           />
+
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+
           <div className="flex justify-end gap-2 pt-4">
             <button
               type="button"
               onClick={onClose}
               className="px-4 py-2 text-sm border border-[#39439f] text-[#39439f] rounded-lg hover:bg-[#f0f1ff]"
+              disabled={loading}
             >
               Cancelar
             </button>
             <button
               type="submit"
               className="bg-[#39439f] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#2e336d] font-medium"
+              disabled={loading}
             >
-              Guardar cambios
+              {loading ? "Guardando..." : "Guardar cambios"}
             </button>
           </div>
         </form>

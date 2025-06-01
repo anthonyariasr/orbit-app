@@ -63,7 +63,7 @@ const TermAccordion: React.FC<TermAccordionProps> = ({ termId, title, onEdit }) 
       </div>
 
       {isOpen && (
-        <div className="px-2 lg:px-6 p-6">
+        <div className="px-6 lg:px-6 p-6">
           {loading ? (
             <p className="text-sm text-gray-500">Cargando cursos...</p>
           ) : courses.length > 0 ? (

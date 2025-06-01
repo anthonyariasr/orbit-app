@@ -1,8 +1,9 @@
-'use client';
+"use client";
 
 import { useState } from "react";
 import Input from "./Input";
-import { registerUser, RegisterPayload } from "@/lib/api/auth";
+import { registerUser } from "@/lib/api/auth";
+import { RegisterPayload } from "@/lib/types";
 import { useRouter } from "next/navigation";
 
 const RegisterForm = () => {
@@ -12,7 +13,7 @@ const RegisterForm = () => {
     username: "",
     email: "",
     career: "",
-    gender: "", // placeholder
+    gender: "",
     university: "",
     password: "",
   });
@@ -30,7 +31,13 @@ const RegisterForm = () => {
     setLoading(true);
 
     // Validación de campos requeridos
-    if (!form.username || !form.email || !form.career || !form.gender || !form.password) {
+    if (
+      !form.username ||
+      !form.email ||
+      !form.career ||
+      !form.gender ||
+      !form.password
+    ) {
       setError("Por favor, completá todos los campos obligatorios.");
       setLoading(false);
       return;
@@ -49,15 +56,28 @@ const RegisterForm = () => {
   return (
     <form onSubmit={handleSubmit} className="space-y-5 text-sm text-[#1E1E2F]">
       <div>
-        <Input placeholder="Nombre de usuario" value={form.username} onChange={(v) => handleChange("username", v)} />
+        <Input
+          placeholder="Nombre de usuario"
+          value={form.username}
+          onChange={(v) => handleChange("username", v)}
+        />
       </div>
 
       <div>
-        <Input type="email" placeholder="Correo electrónico" value={form.email} onChange={(v) => handleChange("email", v)} />
+        <Input
+          type="email"
+          placeholder="Correo electrónico"
+          value={form.email}
+          onChange={(v) => handleChange("email", v)}
+        />
       </div>
 
       <div>
-        <Input placeholder="Carrera" value={form.career} onChange={(v) => handleChange("career", v)} />
+        <Input
+          placeholder="Carrera"
+          value={form.career}
+          onChange={(v) => handleChange("career", v)}
+        />
       </div>
 
       <div>
@@ -66,7 +86,9 @@ const RegisterForm = () => {
           onChange={(e) => handleChange("gender", e.target.value)}
           className="w-full px-4 py-2 rounded-lg border border-[#E0E0E5] bg-white focus:outline-none focus:ring-2 focus:ring-[#39439f]"
         >
-          <option value="" disabled hidden>Seleccioná tu género</option>
+          <option value="" disabled hidden>
+            Seleccioná tu género
+          </option>
           <option value="m">Masculino</option>
           <option value="f">Femenino</option>
           <option value="o">Otro</option>
@@ -74,11 +96,20 @@ const RegisterForm = () => {
       </div>
 
       <div>
-        <Input placeholder="Universidad (Opcional)" value={form.university} onChange={(v) => handleChange("university", v)} />
+        <Input
+          placeholder="Universidad (Opcional)"
+          value={form.university}
+          onChange={(v) => handleChange("university", v)}
+        />
       </div>
 
       <div>
-        <Input type="password" placeholder="Contraseña" value={form.password} onChange={(v) => handleChange("password", v)} />
+        <Input
+          type="password"
+          placeholder="Contraseña"
+          value={form.password}
+          onChange={(v) => handleChange("password", v)}
+        />
       </div>
 
       {error && <p className="text-red-500 text-sm">{error}</p>}

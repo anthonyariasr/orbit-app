@@ -1,5 +1,6 @@
 from pydantic import BaseModel, ConfigDict
-from typing import Optional
+from typing import Optional, List
+from app.schemas.course_schemas import CourseResponse, CourseBase
 
 
 class TermBase(BaseModel):
@@ -13,5 +14,11 @@ class TermCreate(TermBase):
 
 class TermResponse(TermBase):
     id: int
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class TermWithCoursesResponse(TermResponse):
+    courses: List[CourseResponse]
 
     model_config = ConfigDict(from_attributes=True)

@@ -108,3 +108,30 @@ def busiest_day(
     Returns the day of the week with the most class hours in the active term.
     """
     return {"busiest_day": statistics_service.get_busiest_day(current_user.id, db)}
+
+
+@router.get("/summary")
+def get_statistics_summary(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    return {
+        "average_credits_per_term": statistics_service.get_average_credits_per_term(
+            current_user.id, db
+        ),
+        "average_credits_per_course": statistics_service.get_average_credits_per_course(
+            current_user.id, db
+        ),
+        "weighted_grade_average": statistics_service.get_weighted_grade_average(
+            current_user.id, db
+        ),
+        "weekly_class_hours": statistics_service.get_weekly_class_hours(
+            current_user.id, db
+        ),
+        "course_status": statistics_service.get_course_status_counts(
+            current_user.id, db
+        ),
+        "credits_by_term": statistics_service.get_total_credits_by_term(
+            current_user.id, db
+        ),
+    }

@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import relationship
 from app.database.db_config import Base
 
 
@@ -12,3 +13,6 @@ class User(Base):
     career = Column(String, nullable=False)
     gender = Column(String, nullable=False)
     university = Column(String, nullable=True)
+
+    notebooks = relationship("Notebook", back_populates="user", cascade="all, delete")
+

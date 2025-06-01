@@ -35,14 +35,13 @@ const LoginForm = () => {
     try {
       const { access_token } = await loginUser({ username, password });
 
-      // ✅ Guardar el token como cookie
       Cookies.set("access_token", access_token, {
         path: "/",
         sameSite: "lax",
         // secure: true, // habilitar si usás HTTPS
       });
 
-      // ✅ Esperá un poco para asegurarte que la cookie esté seteada antes de redirigir
+      
       setTimeout(() => {
         router.push("/home");
       }, 100);

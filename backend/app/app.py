@@ -9,6 +9,7 @@ import app.models.term
 import app.models.course
 import app.models.assignment
 import app.models.schedule_slot
+import app.models.notebook
 
 # Import routers
 from app.routers import (
@@ -18,7 +19,8 @@ from app.routers import (
     assignment_router,
     schedule_slot_router,
     statistics_router,
-    calendar_router
+    calendar_router,
+    notebook_router
 )
 
 
@@ -50,3 +52,4 @@ app.include_router(assignment_router.router)
 app.include_router(schedule_slot_router.router)
 app.include_router(statistics_router.router)
 app.include_router(calendar_router.router)
+app.include_router(notebook_router.router)

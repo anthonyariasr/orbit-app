@@ -19,7 +19,9 @@ export default function LoginLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#F3F4F6] text-gray-900 min-h-screen`}>
+    <div
+      className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#F3F4F6] text-gray-900 min-h-screen`}
+    >
       {children}
     </div>
   );

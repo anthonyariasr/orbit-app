@@ -1,30 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import TermAccordion from "./TermAccordion";
 import EditTermModal from "./EditTermModal";
 import TermHeader from "./TermHeader";
-import api from "@/lib/axios";
+import { useState } from "react";
 import { Term } from "@/lib/types";
+import { useTermHistory } from "@/hooks/useTermHistory";
 
 const TermHistory = () => {
-  const [terms, setTerms] = useState<Term[]>([]);
+  const { terms, loading, error, refetch } = useTermHistory();
   const [selectedTerm, setSelectedTerm] = useState<Term | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
-
-  const fetchTerms = async () => {
-    try {
-      const res = await api.get<Term[]>("/terms");
-      const sortedTerms = res.data.sort((a, b) => a.id - b.id);
-      setTerms(sortedTerms);
-    } catch (error) {
-      console.error("Error fetching terms:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchTerms();
-  }, []);
 
   const handleEditClick = (termId: number) => {
     const term = terms.find((t) => t.id === termId);
@@ -40,7 +26,7 @@ const TermHistory = () => {
   };
 
   const handleTermUpdated = async () => {
-    await fetchTerms();
+    await refetch();
     handleModalClose();
   };
 
@@ -48,11 +34,15 @@ const TermHistory = () => {
     <div className="pb-6">
       <TermHeader title="Historial académico" />
 
+      {loading && <p className="text-gray-500 px-6">Cargando términos...</p>}
+      {error && <p className="text-red-500 px-6">{error}</p>}
+
       {terms.map((term) => (
         <TermAccordion
           key={term.id}
           termId={term.id}
           title={term.name}
+          courses={term.courses} // ✅ acceso directo sin llamadas extra
           onEdit={handleEditClick}
         />
       ))}
@@ -62,7 +52,7 @@ const TermHistory = () => {
           term={selectedTerm}
           isOpen={modalOpen}
           onClose={handleModalClose}
-          onUpdated={handleTermUpdated} // ✅ refresca tras editar o eliminar
+          onUpdated={handleTermUpdated}
         />
       )}
     </div>

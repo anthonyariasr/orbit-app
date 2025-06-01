@@ -2,7 +2,7 @@
 
 import AuthGuard from "@/components/AuthGuard";
 import DashboardStatistics from "./components/DashboardStatistics"; 
-import TermHeader from "../home/components/TermHeader";
+import TermHeader from "@/shared/TermHeader";
 
 const StatisticsPage = () => {
   return (

@@ -1,9 +1,9 @@
 from fastapi import HTTPException, status
+from typing import List
 from sqlalchemy.orm import Session
-from app.database.db_config import SessionLocal
 from app.models.term import Term
 from app.models.user import User
-from app.schemas.term_schemas import TermCreate
+from app.schemas.term_schemas import TermCreate, TermWithCoursesResponse
 
 """
 Handles logic for creating, retrieving, updating, and deleting academic terms.
@@ -11,24 +11,12 @@ Each term must be associated with a user.
 Only one term can be active per user at a time.
 """
 
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
-def create_term(
-    term_data: TermCreate, current_user: User, db: Session = next(get_db())
-):
+def create_term(term_data: TermCreate, current_user: User, db: Session):
     """
     Creates a new academic term for a user.
     Ensures no more than one active term per user.
     """
     if term_data.is_active:
-        # Desactivar cualquier otro término activo del mismo usuario
         db.query(Term).filter(
             Term.user_id == current_user.id, Term.is_active == True
         ).update({"is_active": False})
@@ -43,14 +31,14 @@ def create_term(
     return new_term
 
 
-def get_all_terms(current_user: User, db: Session = next(get_db())):
+def get_all_terms(current_user: User, db: Session):
     """
     Returns all terms for the current user.
     """
     return db.query(Term).filter(Term.user_id == current_user.id).all()
 
 
-def get_term_by_id(term_id: int, db: Session = next(get_db())):
+def get_term_by_id(term_id: int, db: Session):
     """
     Retrieves a single term by ID.
     """
@@ -60,21 +48,14 @@ def get_term_by_id(term_id: int, db: Session = next(get_db())):
     return term
 
 
-def get_active_term(user: User):
-    return (
-        SessionLocal()
-        .query(Term)
-        .filter(Term.user_id == user.id, Term.is_active == True)
-        .first()
-    )
+def get_active_term(user: User, db: Session):
+    """
+    Returns the currently active term for the user.
+    """
+    return db.query(Term).filter(Term.user_id == user.id, Term.is_active == True).first()
 
 
-def update_term(
-    term_id: int,
-    updated_data: TermCreate,
-    current_user: User,
-    db: Session = next(get_db()),
-):
+def update_term(term_id: int, updated_data: TermCreate, current_user: User, db: Session):
     """
     Updates the data of an existing term.
     Ensures only one term can be active for the same user.
@@ -95,7 +76,7 @@ def update_term(
     return term
 
 
-def delete_term(term_id: int, db: Session = next(get_db())):
+def delete_term(term_id: int, db: Session):
     """
     Deletes a term by its ID.
     """
@@ -106,3 +87,13 @@ def delete_term(term_id: int, db: Session = next(get_db())):
     db.delete(term)
     db.commit()
     return {"message": "Term deleted successfully"}
+
+
+
+"""PENDING FIX"""
+def get_terms_with_courses(db: Session, user: User) -> List[TermWithCoursesResponse]:
+    """
+    Returns all terms along with their courses for a user.
+    """
+    terms = db.query(Term).filter(Term.user_id == user.id).order_by(Term.id).all()
+    return [TermWithCoursesResponse.model_validate(term) for term in terms]

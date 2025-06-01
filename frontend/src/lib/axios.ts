@@ -1,4 +1,3 @@
-// lib/api/axiosInstance.ts
 import axios from "axios";
 import Cookies from "js-cookie";
 
@@ -12,7 +11,7 @@ const api = axios.create({
 // Interceptor para agregar el token JWT automáticamente desde la cookie
 api.interceptors.request.use((config) => {
   if (typeof window !== "undefined") {
-    const token = Cookies.get("access_token"); // ✅ leemos desde la cookie
+    const token = Cookies.get("access_token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

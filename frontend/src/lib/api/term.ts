@@ -1,5 +1,5 @@
 import api from "@/lib/axios";
-import { TermPayload, TermResponse } from "@/lib/types";
+import { TermPayload, TermResponse, Term } from "@/lib/types";
 
 export const createTerm = async (
   payload: TermPayload
@@ -33,4 +33,9 @@ export const updateTerm = async (
 
 export const deleteTerm = async (termId: number): Promise<void> => {
   await api.delete(`/terms/${termId}`);
+};
+
+export const getTermsWithCourses = async (): Promise<Term[]> => {
+  const response = await api.get("/terms/with-courses");
+  return response.data;
 };

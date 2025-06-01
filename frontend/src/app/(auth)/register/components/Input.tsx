@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 interface Props {
   type?: string;
@@ -7,7 +7,12 @@ interface Props {
   onChange: (value: string) => void;
 }
 
-const Input: React.FC<Props> = ({ type = "text", placeholder, value, onChange }) => (
+const Input: React.FC<Props> = ({
+  type = "text",
+  placeholder,
+  value,
+  onChange,
+}) => (
   <input
     type={type}
     placeholder={placeholder}

@@ -84,7 +84,7 @@ def get_weighted_grade_average(user_id: int, db: Session) -> float:
         .join(Term)
         .filter(
             Term.user_id == user_id,
-            Course.status == "approved",
+            Course.status != "in_progress",
             Course.grade != None,
             Course.credits != None,
         )

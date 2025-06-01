@@ -31,7 +31,9 @@ const AssignmentCard = ({ assignment, onClick }: Props) => {
         </h3>
 
         {assignment.course_name && (
-          <p className="text-sm text-[#39439f] mt-1">{assignment.course_name}</p>
+          <p className="text-sm text-[#39439f] mt-1">
+            {assignment.course_name}
+          </p>
         )}
       </div>
     </button>

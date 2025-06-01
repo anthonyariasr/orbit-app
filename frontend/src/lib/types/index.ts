@@ -35,7 +35,6 @@ interface AssignmentWithCourseName extends Assignment {
   course_name?: string;
 }
 
-
 /**Calendar */
 
 export interface CalendarEvent {
@@ -111,8 +110,8 @@ export interface Term {
   id: number;
   name: string;
   is_active: boolean;
-  courses: Course[]; // Asegurate que esto esté definido
-  progress: number; // Este campo es tuyo local
+  courses: Course[];
+  progress: number;
 }
 
 /**User */
@@ -127,3 +126,18 @@ export interface User {
 }
 
 export type UserPayload = Omit<User, "id">;
+
+/**Notebook */
+
+export type Notebook = {
+  id: number;
+  title: string;
+  content: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type NotebookPayload = {
+  title: string;
+  content: string;
+};

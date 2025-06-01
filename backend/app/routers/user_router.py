@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from typing import List
-from app.schemas.user_schemas import UserCreate, UserResponse, UserLogin
+from app.schemas.user_schemas import UserCreate, UserResponse, UserLogin, UserBase
 from app.controllers import auth_controllers, user_controllers
 from app.dependencies.auth import get_current_user, oauth2_scheme
 from app.models.user import User
@@ -84,7 +84,7 @@ def get_user_by_id(user_id: int):
 
 
 @router.put("/{user_id}", response_model=UserResponse)
-def update_user(user_id: int, updated_user: UserCreate):
+def update_user(user_id: int, updated_user: UserBase):
     """
     Update user profile information such as name, career, gender, etc.
     """

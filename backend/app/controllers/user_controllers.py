@@ -47,7 +47,6 @@ def update_user(user_id: int, user_data: UserCreate, db: Session = next(get_db()
     user.career = user_data.career
     user.gender = user_data.gender
     user.university = user_data.university
-    user.hashed_password = hash_password(user_data.password)
 
     db.commit()
     db.refresh(user)

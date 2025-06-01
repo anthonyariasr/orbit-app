@@ -50,13 +50,11 @@ export const useActiveTerm = () => {
   const finishTerm = async () => {
     if (!term) return;
     try {
-      // Marcar como inactivo
       await updateTerm(term.id, {
         ...term,
         is_active: false,
       });
 
-      // Intentar cargar nuevo término activo
       try {
         const newTerm = await getActiveTerm();
         const courses = await getCoursesByTerm(newTerm.id);
@@ -67,7 +65,6 @@ export const useActiveTerm = () => {
         setEvents(calendarEvents);
         setAssignments(assignments);
       } catch {
-        // No hay término activo, se limpia el estado
         setTerm(null);
         setEvents([]);
         setAssignments([]);

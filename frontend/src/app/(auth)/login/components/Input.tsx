@@ -1,5 +1,4 @@
-// src/app/login/components/Input.tsx
-'use client';
+"use client";
 
 import React from "react";
 
@@ -10,7 +9,12 @@ interface Props {
   onChange: (value: string) => void;
 }
 
-const Input: React.FC<Props> = ({ type = "text", placeholder, value, onChange }) => (
+const Input: React.FC<Props> = ({
+  type = "text",
+  placeholder,
+  value,
+  onChange,
+}) => (
   <input
     type={type}
     placeholder={placeholder}

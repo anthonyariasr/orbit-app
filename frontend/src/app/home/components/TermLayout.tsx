@@ -1,6 +1,6 @@
 import UpcomingAssignments from "./UpcomingAssignments";
 import { Assignment, Term, CalendarEvent } from "@/lib/types";
-import TermHeader from "./TermHeader";
+import TermHeader from "@/shared/TermHeader";
 import CourseList from "./CourseList";
 import TermCalendar from "./TermCalendar";
 
