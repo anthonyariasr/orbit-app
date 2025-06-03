@@ -1,4 +1,3 @@
-// src/components/statistics/BarChartCredits.tsx
 import {
   BarChart,
   Bar,

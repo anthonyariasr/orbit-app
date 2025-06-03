@@ -21,7 +21,7 @@ const navItems = [
   { name: "Inicio", href: "/home", icon: <Home size={18} /> },
   { name: "Términos", href: "/terms", icon: <CalendarClock size={18} /> },
   { name: "Estadísticas", href: "/stats", icon: <BarChart2 size={18} /> },
-  { name: "Notebooks", href: "/notebooks", icon: <NotebookIcon size={18} /> },
+  { name: "Apuntes", href: "/notebooks", icon: <NotebookIcon size={18} /> },
   { name: "Pomodoro", href: "/pomodoro", icon: <Timer size={18} /> },
   { name: "Perfil", href: "/profile", icon: <Settings size={18} /> },
 ];

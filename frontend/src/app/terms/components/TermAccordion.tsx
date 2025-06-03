@@ -13,7 +13,11 @@ interface TermAccordionProps {
   onEdit: (termId: number) => void;
 }
 
-const TermAccordion: React.FC<TermAccordionProps> = ({ termId, title, onEdit }) => {
+const TermAccordion: React.FC<TermAccordionProps> = ({
+  termId,
+  title,
+  onEdit,
+}) => {
   const [isOpen, setIsOpen] = useState(true);
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
@@ -67,20 +71,21 @@ const TermAccordion: React.FC<TermAccordionProps> = ({ termId, title, onEdit }) 
           {loading ? (
             <p className="text-sm text-gray-500">Cargando cursos...</p>
           ) : courses.length > 0 ? (
-            <div className="grid justify-center gap-6 grid-cols-[repeat(auto-fit,_minmax(320px,_1fr))]">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {courses.map((course) => (
-                <div key={course.id} className="w-80">
-                  <CourseCard
-                    course={course}
-                    editable={true}
-                    showDetails={false}
-                    onClick={handleCourseClick}
-                  />
-                </div>
+                <CourseCard
+                  key={course.id}
+                  course={course}
+                  editable={true}
+                  showDetails={false}
+                  onClick={handleCourseClick}
+                />
               ))}
             </div>
           ) : (
-            <p className="text-sm text-gray-500">No hay cursos registrados en este término.</p>
+            <p className="text-sm text-gray-500">
+              No hay cursos registrados en este término.
+            </p>
           )}
         </div>
       )}

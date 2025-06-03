@@ -1,24 +1,37 @@
 "use client";
 
-import { Notebook } from "@/lib/types";
+import React from "react";
 import { useRouter } from "next/navigation";
+import { Notebook } from "@/lib/types";
+import { BookOpen } from "lucide-react";
 
-type Props = {
+interface Props {
   notebook: Notebook;
-};
+}
 
-export default function NotebookCard({ notebook }: Props) {
+const NotebookCard = ({ notebook }: Props) => {
   const router = useRouter();
 
   return (
     <div
       onClick={() => router.push(`/notebooks/${notebook.id}`)}
-      className="p-4 rounded-xl border hover:shadow-md cursor-pointer bg-white dark:bg-zinc-900 transition"
+      className="bg-gradient-to-br from-white to-[#f0f1fa] rounded-2xl shadow-sm hover:shadow-lg hover:scale-[1.02] transition-all cursor-pointer flex flex-col aspect-[3/4] w-full min-w-[140px] max-w-[180px] overflow-hidden"
     >
-      <h2 className="text-lg font-semibold">{notebook.title}</h2>
-      <p className="text-sm text-zinc-500 mt-1">
-        Updated: {new Date(notebook.updated_at).toLocaleString()}
-      </p>
+      {/* Parte principal con ícono */}
+      <div className="flex flex-1 items-center justify-center">
+        <div className="bg-[#e5e8fc] p-4 rounded-full">
+          <BookOpen size={40} className="text-[#39439f]" />
+        </div>
+      </div>
+
+      {/* Franja inferior con el título */}
+      <div className="bg-[#39439f] w-full px-3 py-3 text-center">
+        <h3 className="text-sm font-medium text-white line-clamp-2">
+          {notebook.title}
+        </h3>
+      </div>
     </div>
   );
-}
+};
+
+export default NotebookCard;

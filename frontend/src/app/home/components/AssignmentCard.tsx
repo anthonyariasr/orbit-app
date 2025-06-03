@@ -9,7 +9,7 @@ interface Props {
 }
 
 const AssignmentCard = ({ assignment, onClick }: Props) => {
-  const dueDate = new Date(assignment.due_date);
+  const dueDate = new Date(`${assignment.due_date}T00:00:00`); 
   const day = format(dueDate, "dd", { locale: es });
   const month = format(dueDate, "MMM", { locale: es }).toUpperCase();
 

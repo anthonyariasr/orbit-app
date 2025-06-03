@@ -46,7 +46,7 @@ const ProfilePage = () => {
                 <div className="flex flex-col space-y-6 text-[#1E1E2F]">
                   <div>
                     <h4 className="text-sm font-semibold text-gray-500 mb-1">
-                      Nombre
+                      Username
                     </h4>
                     <p className="text-lg font-medium">{user.username}</p>
                   </div>
