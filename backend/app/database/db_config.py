@@ -3,13 +3,19 @@ from sqlalchemy.engine import Engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 import os
 from dotenv import load_dotenv
-import sqlite3  # necesario para verificar tipo de conexión
+import sqlite3
 
+# Carga las variables del archivo .env
 load_dotenv()
 
-DATABASE_URL = "sqlite:///./mock.db"
-# DATABASE_URL = os.getenv("DATABASE_URL")
+# Usa la variable DATABASE_URL desde el entorno
+DATABASE_URL = os.getenv("DATABASE_URL")
+print(DATABASE_URL)
 
+if not DATABASE_URL:
+    raise ValueError("DATABASE_URL not found in .env file")
+
+# Crea el motor dependiendo del tipo de base de datos
 engine = create_engine(
     DATABASE_URL,
     echo=True,
@@ -22,7 +28,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
 
-# ✅ Activar PRAGMA foreign_keys solo si es SQLite
+# Solo activa claves foráneas si estás usando SQLite
 @event.listens_for(Engine, "connect")
 def enable_foreign_keys(dbapi_connection, connection_record):
     if isinstance(dbapi_connection, sqlite3.Connection):
@@ -30,6 +36,7 @@ def enable_foreign_keys(dbapi_connection, connection_record):
         cursor.execute("PRAGMA foreign_keys=ON")
         cursor.close()
 
+# Dependencia para FastAPI
 def get_db():
     db = SessionLocal()
     try:
