@@ -24,6 +24,7 @@ const renderCustomLabel = ({
   name,
   percent,
 }: PieLabelRenderProps & { name?: string }) => {
+  if (percent === undefined) return name || "";
   const formatted = `${(percent * 100).toFixed(0)}%`;
   return `${name} (${formatted})`;
 };

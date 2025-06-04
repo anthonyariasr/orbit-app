@@ -11,6 +11,7 @@ interface TermAccordionProps {
   termId: number;
   title: string;
   onEdit: (termId: number) => void;
+  courses: Course[];
 }
 
 const TermAccordion: React.FC<TermAccordionProps> = ({
