@@ -1,7 +1,17 @@
+.markdown {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Encabezados */
 .markdown h1 {
   font-size: 1.875rem;
   font-weight: 700;
-  color: #39439f; /* color de acento */
+  color: #39439f;
   margin-bottom: 1rem;
 }
 
@@ -21,6 +31,7 @@
   margin-bottom: 0.75rem;
 }
 
+/* Párrafos y listas */
 .markdown p {
   margin-bottom: 1rem;
   color: #1e1e2f;
@@ -38,6 +49,7 @@
   line-height: 1.5;
 }
 
+/* Código en línea y bloques */
 .markdown code {
   background-color: #f4f4f4;
   padding: 0.2rem 0.4rem;
@@ -45,6 +57,8 @@
   font-family: "Courier New", monospace;
   font-size: 0.9rem;
   color: #39439f;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .markdown pre {
@@ -55,8 +69,12 @@
   margin-bottom: 1rem;
   font-family: "Courier New", monospace;
   font-size: 0.9rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-width: 100%;
 }
 
+/* Citas */
 .markdown blockquote {
   border-left: 4px solid #39439f;
   padding-left: 1rem;
@@ -67,11 +85,29 @@
   border-radius: 4px;
 }
 
+/* Imágenes */
+.markdown img {
+  display: block;
+  margin: 1.5rem auto;
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  object-fit: contain;
+}
+
+/* Tablas responsivas con scroll horizontal */
+.markdown .markdown-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 1rem;
+}
+
 .markdown table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 1rem;
   font-size: 0.95rem;
+  min-width: 600px; /* para activar scroll si es muy ancha */
 }
 
 .markdown th,
@@ -79,12 +115,14 @@
   border: 1px solid #d1d5db;
   padding: 0.5rem;
   text-align: left;
+  white-space: nowrap;
 }
 
-.markdown img {
-  display: block;
-  margin: 1.5rem auto;
+/* Iframes (por si se usa contenido embebido) */
+.markdown iframe {
   max-width: 100%;
+  width: 100%;
   height: auto;
-  border-radius: 8px;
+  border: none;
+  display: block;
 }
