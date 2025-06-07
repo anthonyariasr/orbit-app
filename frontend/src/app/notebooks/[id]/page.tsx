@@ -53,26 +53,15 @@ export default function NotebookDetailPage() {
 
   const handleDownloadPDF = () => {
     if (articleRef.current) {
-      const element = articleRef.current;
-
-      const pxToIn = (px: number): number => px / 96;
-
-      const width = pxToIn(element.scrollWidth);
-      const height = pxToIn(element.scrollHeight);
-
       html2pdf()
         .set({
-          margin: 0,
+          margin: 0.5,
           filename: `${notebook?.title || "notebook"}.pdf`,
           image: { type: "jpeg", quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true },
-          jsPDF: {
-            unit: "in",
-            format: [width, height],
-            orientation: "portrait",
-          },
+          html2canvas: { scale: 4, useCORS: true },
+          jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
         })
-        .from(element)
+        .from(articleRef.current)
         .save();
     }
   };
